@@ -28,7 +28,6 @@ def test_api():
 
     return jsonify({
         'source': request.url_root,
-        'complex_data': complex_data,
         'message': 'success'
     })
 
