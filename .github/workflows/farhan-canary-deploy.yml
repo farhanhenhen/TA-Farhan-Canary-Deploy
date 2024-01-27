@@ -10,6 +10,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Set up SSH
+      run: |
+        eval "$(ssh-agent -s)"
+        ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
+
     - name: Checkout Repository
       uses: actions/checkout@v2
 
