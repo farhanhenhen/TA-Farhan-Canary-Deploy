@@ -10,13 +10,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
     - name: Set up SSH
       run: |
         eval "$(ssh-agent -s)"
-        ssh-add - <<< "${{ secrets.SSH_PRIVATE_KEY }}"
-
-    - name: Checkout Repository
-      uses: actions/checkout@v2
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" | tr -d '\r' | ssh-add -
 
     - name: SSH to Server and Pull Repository server-a
       uses: appleboy/ssh-action@master
