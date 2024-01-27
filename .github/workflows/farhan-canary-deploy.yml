@@ -15,6 +15,13 @@ jobs:
 
     - name: Set up SSH
       run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan -p "${{ secrets.SSH_PORT }}" "${{ secrets.SERVER_HOST }}" > ~/.ssh/known_hosts
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        eval "$(ssh-agent -s)"
+        ssh-add ~/.ssh/id_rsa
+        echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
 
     - name: SSH to Server and Pull Repository server-a
       uses: appleboy/ssh-action@master
@@ -24,20 +31,12 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: ${{ secrets.SSH_PORT }}
         script: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -p "${{ secrets.SSH_PORT }}" ${{ secrets.SERVER_HOST }}" > ~/.ssh/known_hosts
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          eval "$(ssh-agent -s)"
-          ssh-add ~/.ssh/id_rsa
-          echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config
-          ls -al
-          # ssh -i /root/.ssh/key-server-a root@10.0.1.2
-          # cd /home/farhanmulya182/flask/TA-Farhan-Canary-Deploy
-          # git pull origin master 
-          # systemctl stop farhan-api
-          # sleep 60
-          # systemctl start farhan-api
+          ssh -i /root/.ssh/key-server-a root@10.0.1.2
+          cd /home/farhanmulya182/flask/TA-Farhan-Canary-Deploy
+          git pull origin master 
+          systemctl stop farhan-api
+          sleep 60
+          systemctl start farhan-api
           
 
     # - name: SSH to Server and Pull Repository server-b 
